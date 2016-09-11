@@ -16,17 +16,14 @@ import java.util.Date;
 
 public class WelcomeActivity extends Activity {
 
-    private DateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd'T'HH:mm:ss");
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         TextView message = (TextView) findViewById(R.id.welcome_message);
-        Date date = new Date();
         Bundle bundle = this.getIntent().getExtras();
         if (bundle != null){
-            message.setText("Welcome "+ bundle.getString("USER")+ " current time is "+dateFormat.format(date));
+            message.setText("Welcome "+ bundle.getString("USER"));
         }
     }
 }
