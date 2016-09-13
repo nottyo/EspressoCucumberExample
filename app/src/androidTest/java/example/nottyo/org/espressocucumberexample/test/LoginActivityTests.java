@@ -2,24 +2,23 @@ package example.nottyo.org.espressocucumberexample.test;
 
 
 import android.app.Activity;
-import android.app.KeyguardManager;
-import android.content.Context;
-import android.os.PowerManager;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.annotation.UiThreadTest;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.Window;
 import android.view.WindowManager;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,44 +38,19 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class LoginActivityTests {
 
-    private Activity mActivity;
-    private PowerManager.WakeLock mFullWakeUpLock;
-
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
+    private Activity mActivity;
+
 
     @Before
     public void setUp(){
         mActivity = mActivityTestRule.getActivity();
-        turnOnScreen();
-        unlockScreen();
-    }
-
-    private void turnOnScreen(){
-        PowerManager powerManager = (PowerManager) mActivity.getSystemService(Context.POWER_SERVICE);
-        mFullWakeUpLock = powerManager.newWakeLock((PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP), "FULL WAKE UP LOCK");
-        mFullWakeUpLock.acquire();
-    }
-
-    private void unlockScreen(){
-        KeyguardManager keyguard = (KeyguardManager) mActivity.getSystemService(Context.KEYGUARD_SERVICE);
-        keyguard.newKeyguardLock(getClass().getSimpleName()).disableKeyguard();
-        mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
-
-    }
-
-    private void turnOffScreen(){
-        if (mFullWakeUpLock != null){
-            mFullWakeUpLock.release();
-        }
     }
 
     @Test
@@ -93,7 +67,7 @@ public class LoginActivityTests {
                 allOf(ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.email_sign_in_button), withText("Login"),
                         withParent(allOf(ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.email_login_form),
                                 withParent(ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.login_form))))));
-        SpoonScreenshot.takeScreenshot(mActivityTestRule.getActivity(), "Login");
+        SpoonScreenshot.takeScreenshot(mActivity, "Login");
         appCompatButton.perform(scrollTo(), click());
 
         ViewInteraction textView = onView(
@@ -106,13 +80,8 @@ public class LoginActivityTests {
                                 0),
                         isDisplayed()));
         textView.check(matches(withText("Welcome test@test.com")));
-        SpoonScreenshot.takeScreenshot(mActivityTestRule.getActivity(), "Welcome");
+        SpoonScreenshot.takeScreenshot(mActivity, "Welcome");
 
-    }
-
-    @After
-    public void tearDown(){
-        turnOffScreen();
     }
 
     private static Matcher<View> childAtPosition(
