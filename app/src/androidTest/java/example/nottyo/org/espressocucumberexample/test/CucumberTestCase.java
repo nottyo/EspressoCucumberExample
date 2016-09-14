@@ -8,6 +8,9 @@ import cucumber.api.CucumberOptions;
 
 
 @CucumberOptions(features = "features",
-                glue = {"example.nottyo.org.espressocucumberexample.steps"})
+                glue = {"example.nottyo.org.espressocucumberexample.steps"},
+                format = {"pretty",
+                          "json:/storage/sdcard0/test-screenshots/cucumber-reports/cucumber.json",
+                          "html:/storage/sdcard0/test-screenshots/cucumber-reports/cucumber-html-report"})
 public class CucumberTestCase {
 }

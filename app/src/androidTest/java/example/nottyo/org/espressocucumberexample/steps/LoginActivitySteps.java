@@ -67,7 +67,7 @@ public class LoginActivitySteps {
                 allOf(ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.email_sign_in_button), withText("Login"),
                         withParent(allOf(ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.email_login_form),
                                 withParent(ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.login_form))))));
-        SpoonScreenshot.takeScreenshot(mActivity, "Login");
+        SpoonScreenshot.takeScreenshot("PressLogin");
         appCompatButton.perform(scrollTo(), click());
     }
 
@@ -83,7 +83,7 @@ public class LoginActivitySteps {
                                 0),
                         isDisplayed()));
         textView.check(matches(withText(welcomeText)));
-        SpoonScreenshot.takeScreenshot(mActivity, "Welcome");
+        SpoonScreenshot.takeScreenshot("AssertingWelcomeText");
     }
 
 
