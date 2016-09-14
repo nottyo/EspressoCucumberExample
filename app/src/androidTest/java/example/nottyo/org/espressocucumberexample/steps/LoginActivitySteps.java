@@ -1,29 +1,25 @@
-package example.nottyo.org.espressocucumberexample.test;
+package example.nottyo.org.espressocucumberexample.steps;
 
 
 import android.app.Activity;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.annotation.UiThreadTest;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.LargeTest;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.WindowManager;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
+import cucumber.api.java.Before;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import example.nottyo.org.espressocucumberexample.*;
 import example.nottyo.org.espressocucumberexample.utils.SpoonScreenshot;
 
@@ -39,37 +35,44 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 
-@LargeTest
-@RunWith(AndroidJUnit4.class)
-public class LoginActivityTests {
+public class LoginActivitySteps {
 
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
     private Activity mActivity;
 
-
     @Before
     public void setUp(){
         mActivity = mActivityTestRule.getActivity();
+        mActivityTestRule.launchActivity(null);
     }
 
-    @Test
-    public void testLogin() {
+    @Given("User specify username \"(.*)\"")
+    public void specifyUsername(String username){
         ViewInteraction appCompatAutoCompleteTextView = onView(
                 ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.email));
-        appCompatAutoCompleteTextView.perform(scrollTo(), replaceText("test@test.com"));
+        appCompatAutoCompleteTextView.perform(scrollTo(), replaceText(username));
+    }
 
+    @And("User specify password \"(.*)\"")
+    public void specifyPassword(String password){
         ViewInteraction appCompatEditText = onView(
                 ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.password));
-        appCompatEditText.perform(scrollTo(), replaceText("2234567"));
+        appCompatEditText.perform(scrollTo(), replaceText(password));
+    }
 
+    @When("User press login button")
+    public void pressLoginButton(){
         ViewInteraction appCompatButton = onView(
                 allOf(ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.email_sign_in_button), withText("Login"),
                         withParent(allOf(ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.email_login_form),
                                 withParent(ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.login_form))))));
         SpoonScreenshot.takeScreenshot(mActivity, "Login");
         appCompatButton.perform(scrollTo(), click());
+    }
 
+    @Then("Welcome text \"(.*)\" is displayed")
+    public void welcomeTextAssertion(String welcomeText){
         ViewInteraction textView = onView(
                 allOf(ViewMatchers.withId(example.nottyo.org.espressocucumberexample.R.id.welcome_message), withText("Welcome test@test.com"),
                         childAtPosition(
@@ -79,10 +82,10 @@ public class LoginActivityTests {
                                                 0)),
                                 0),
                         isDisplayed()));
-        textView.check(matches(withText("Welcome test@test.com")));
+        textView.check(matches(withText(welcomeText)));
         SpoonScreenshot.takeScreenshot(mActivity, "Welcome");
-
     }
+
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
